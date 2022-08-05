@@ -1,0 +1,3 @@
+Jonie M Beriña
+select rooms.name, count(session_registrations.id) as Counter from session_registrations join sessions on session_registrations.session_id = sessions.id
+join rooms on sessions.room_id = rooms.id join channels on rooms.channel_id = channels.id where  channels.event_id = 1 group by rooms.id ;

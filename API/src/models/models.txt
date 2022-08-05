@@ -1,0 +1,435 @@
+
+                // var sessions = [];
+                // var rooms = [];
+                // var channels = [];
+                // var Event = {
+                //     "id": res[0]['eid'],
+                //     "name": res[0]['ename'],
+                //     "slug": res[0]['eslug'],
+                //     "date": res[0]['edate'],
+                //     "channels": [
+                //     ]
+                // };
+                // eventdetails.push(Event);
+                
+                // eventdetails.push(channel);  
+                // dbConn.query(`SELECT count(channels.id) as counter FROM channels WHERE channels.event_id = ?`, res[0]['eid'], (CSerr, CSres)=>{
+                //     for(let c = 0; c <CSres[0]['counter']; c++){
+                        // dbConn.query(`SELECT count(rooms.id) as coun FROM rooms WHERE rooms.channel_id = ?`, 1, (roomcounterr, roomcount)=>{
+                            // dbConn.query(`SELECT rooms.id, rooms.name FROM rooms WHERE rooms.channel_id = ?`, 1, (RDerr, RDres)=>{        
+                            //     //for(let x = 0; x < Rres[0]['counter']; x++){                               
+                            //         //dbConn.query(`SELECT count(sessions.id) as counter FROM sessions WHERE sessions.room_id = ?`, res[0]['rid'], (Serr, Sres)=>{
+                            //             dbConn.query(`SELECT sessions.id, sessions.title, sessions.description, sessions.speaker, sessions.start, sessions.end, sessions.type, sessions.cost FROM sessions WHERE sessions.room_id = ?`, res[0]['rid'], (SDerr, SDres)=>{                                        
+                            //                 // for(let i = 0; i <Sres[0]['counter']; i++){
+                            //                 //     var session ={
+                            //                 //                 "id": SDres[i].id, 
+                            //                 //                 "title": SDres[i].title, 
+                            //                 //                 "description": SDres[i].description, 
+                            //                 //                 "speaker": SDres[i].speaker, 
+                            //                 //                 "start": SDres[i].start, 
+                            //                 //                 "end": SDres[i].end, 
+                            //                 //                 "type": SDres[i].type, 
+                            //                 //                 "cost": SDres[i].cost,
+                            //                 //             }
+                                                
+                            //                 //     sessions.push(session);
+                            //                 // }
+                                            
+                            //                 // var room = {
+                            //                 //             "id": RDres[x]['id'],
+                            //                 //             "name": RDres[x]['name'],
+                            //                 //             "session": SDres,
+                            //                 // };
+                            //                 //rooms.push(room);
+                            //                 //if(x==Rres[0]['roomcounter']){
+                                               
+                            //                 //}
+                            //             })
+                            //             // for(let z = 0; z <Rres[0]['counter']; z++){
+                            //             //         var room = {
+                            //             //                     "id": res[z]['rid'],
+                            //             //                     "name": res[z]['rname'],
+                            //             //                     "sessions": sessions
+                            //             //         }
+                            //             //         rooms.push(room);
+                            //             //     }
+                            //             // for(let z = 0; z <CSres[0]['counter']; z++){
+                            //             //     var channel = {
+                            //             //                 "id": res[z]['cid'],
+                            //             //                 "name": res[z]['cname'],
+                            //             //                 "rooms": rooms
+                            //             //     }
+                            //             //     channels.push(channel);
+                            //             // }
+                                        
+                                            
+                            //         //})
+                            //     //}
+                            //     //result(null, rooms);
+                                
+                            // })
+                            // result(null, roomcount[0]["coun"]);
+                        // })
+                        //result(null, res);
+                           
+                //         })
+                //     }
+                // })
+
+
+
+
+                var sessions = [];
+            var rooms = [];
+            
+            dbCvar sessions = [];
+            var rooms = [];
+            
+            dbConn.query(`SELECT count(rooms.id) as counter FROM rooms WHERE rooms.channel_id = ?`, 1, (Rerr, Rres)=>{
+                if(err){
+                    console.log('Error while fetching events by slug', Rerr);
+                    result(null, Rerr);
+                }else{
+                    dbConn.query(`SELECT rooms.id, rooms.name FROM rooms WHERE rooms.channel_id = ?`, 1, (RDerr, RDres)=>{
+                        if(err){
+                            console.log('Error while fetching events by slug', RDerr);
+                            result(null, RDerr);
+                        }else{
+                            for(let c = 0; c <Rres[0]['counter']; c++){
+                                sessions = [];
+                                dbConn.query(`SELECT count(sessions.id) as counter FROM sessions WHERE sessions.room_id = ?`, RDres[c].id, (Serr, Sres)=>{
+                                    if(err){
+                                        console.log('Error while fetching employee by id', Serr);
+                                        result(null, Serr);
+                                    }else{
+                                        dbConn.query(`SELECT sessions.id, sessions.title, sessions.description, sessions.speaker, sessions.start, sessions.end, sessions.type, sessions.cost FROM sessions WHERE sessions.room_id = ?`, RDres[c].id, (SDerr, SDres)=>{                                        
+                                            if(err){
+                                                console.log('Error while fetching employee by id', SDerr);
+                                                result(null, SDerr);
+                                            }else{
+                                                for(let i = 0; i <Sres[0]['counter']; i++){
+                                                    var session ={
+                                                                "id": SDres[i].id, 
+                                                                "title": SDres[i].title, 
+                                                                "description": SDres[i].description, 
+                                                                "speaker": SDres[i].speaker, 
+                                                                "start": SDres[i].start, 
+                                                                "end": SDres[i].end, 
+                                                                "type": SDres[i].type, 
+                                                                "cost": SDres[i].cost,
+                                                            };
+                                                    
+                                                    sessions.push(session);
+                                                }
+                                                var room = {
+                                                    "id": RDres[c].id,
+                                                    "name": RDres[c].name,
+                                                    "sessions": sessions
+                                                };
+                                                rooms.push(room)
+                                                if(c==1){
+                                                    result(null, SDres.length);
+                                                }
+                                            }
+                                        })
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+
+
+    sessions = [];
+    dbConn.query(`SELECT sessions.id, sessions.title, sessions.description, sessions.speaker, sessions.start, sessions.end, sessions.type, sessions.cost FROM sessions WHERE sessions.room_id = ?`, 1, (SDerr, SDres)=>{                                        
+        var arrleng = SDres.length;
+        if(SDerr){
+            console.log('Error while fetching employee by id', SDerr);
+            result(null, SDerr);
+        }else{
+            for(let i = 0; i <arrleng; i++){
+                var session ={
+                            "id": SDres[i].id, 
+                            "title": SDres[i].title, 
+                            "description": SDres[i].description, 
+                            "speaker": SDres[i].speaker, 
+                            "start": SDres[i].start, 
+                            "end": SDres[i].end, 
+                            "type": SDres[i].type, 
+                            "cost": SDres[i].cost,
+                        };
+                
+                sessions.push(session);
+            }
+            // console.log("amu di length ", arrleng);
+            // console.log("amu di length ", sessions.length);
+            // var counter1213 = sessions.length;
+            // console.log("amu di length ", counter1213);
+            result(null, sessions);
+        }
+    })  
+    dbConn.query(`SELECT channels.id, channels.name FROM channels WHERE channels.event_id = ?`, 1, (CDerr, CDres)=>{
+        var CDarrleng = CDres.length;
+        if(CDerr){
+            console.log('Error while fetching channels by channel id', CDerr);
+            result(null, CDerr);
+        }else{
+            for(let z = 0; z <CDarrleng; z++){
+                const rooms = [];
+                dbConn.query(`SELECT rooms.id, rooms.name FROM rooms WHERE rooms.channel_id = ?`, CDres[z].id, (RDerr, RDres)=>{
+                    var RDarrleng = RDres.length;
+                    if(RDerr){
+                        console.log('Error while fetching rooms by channel id', RDerr);
+                        result(null, RDerr);
+                    }else{
+                        let v = 0;
+                        for(let x = 0; x <RDarrleng; x++){
+                            let sessions = [];
+                            dbConn.query(`SELECT sessions.id, sessions.title, sessions.description, sessions.speaker, sessions.start, sessions.end, sessions.type, sessions.cost FROM sessions WHERE sessions.room_id = ?`, RDres[x].id, (SDerr, SDres)=>{                                        
+                                var arrleng = SDres.length;
+                                if(SDerr){
+                                    console.log('Error while fetching session by room id', SDerr);
+                                    result(null, SDerr);
+                                }else{
+                                    for(let i = 0; i <arrleng; i++){
+                                        var session ={
+                                                    "id": SDres[i].id, 
+                                                    "title": SDres[i].title, 
+                                                    "description": SDres[i].description, 
+                                                    "speaker": SDres[i].speaker, 
+                                                    "start": SDres[i].start, 
+                                                    "end": SDres[i].end, 
+                                                    "type": SDres[i].type, 
+                                                    "cost": SDres[i].cost,
+                                                };
+                                        
+                                        sessions.push(session);
+                                    }
+                                    // console.log("amu di length ", arrleng);
+                                    // console.log("amu di length ", sessions.length);
+                                    // var counter1213 = sessions.length;
+                                    // console.log("amu di length ", counter1213);
+                                    const room = {
+                                        "id": RDres[x].id,
+                                        "name": RDres[x].name,
+                                        "sessions": sessions
+                                    };
+                                    rooms.push(room);
+
+                                    var channel = {
+                                        "id": CDres[z].id,
+                                        "name": CDres[z].name,
+                                        "rooms": rooms
+                                    }
+                                    
+                                    if(channel.id==CDres[z].id){
+                                        console.log('Error while fetching rooms by channel id', channel.id);
+                                        console.log('Error while fetching rooms by channel id', CDres[z].id);
+                                        channels.push(channel);
+                                        v=z;
+                                    }
+                                    if(z==CDarrleng-1){
+                                        console.log(rooms);
+                                        result(null, channels);
+                                    }
+                                }
+                            })
+                        }
+                    }  
+                })
+            }
+        }
+    })
+
+
+
+    // var frwhere = `FROM events, organizers, channels, rooms, sessions, event_tickets WHERE events.organizer_id = organizers.id and events.id = channels.event_id and events.id = event_tickets.event_id and channels.id = rooms.channel_id AND rooms.id = sessions.room_id and events.slug='${EveSlug}' and organizers.slug=?`;
+    // var sql = `SELECT events.id as eid, events.name as ename, events.slug as eslug, events.date as edate, channels.id as cid, channels.name as cname, rooms.id as rid, rooms.name as rname, sessions.id as sid, sessions.title as stitle, sessions.description as sdesc, sessions.speaker as speak, sessions.start as sstart, sessions.end as send, sessions.type as stype, sessions.cost as scost, event_tickets.id as etid, event_tickets.name as etname, event_tickets.cost as etcost, event_tickets.special_validity as etsv ${frwhere}`;
+    // dbConn.query(sql, OrgSlug, function (err, res) {
+        // if(err){
+        //     console.log('Error while fetching events by slug', err);
+        //     result(null, err);
+        // }else{
+    // let events = [];
+    // dbConn.query(`SELECT events.id, events.name, events.slug, events.date FROM events WHERE events.slug = ?`, EveSlug, (EDerr, EDres)=>{
+    //     var EDarrleng = EDres.length;
+    //     if(EDerr){
+    //         console.log('Error while fetching channels by channel id', EDerr);
+    //         result(null, EDerr);
+    //     }else{
+    //         for(let v = 0; v <EDarrleng; v++){
+    //             const event = {
+    //                 "id": EDres[v].id,
+    //                 "name": EDres[v].name,
+    //                 "slug": EDres[v].slug,
+    //                 "date": EDres[v].date,
+    //                 "channels": ""
+    //             }
+    //             events.push(event);
+    //             
+                dbConn.query(`SELECT channels.id, channels.name FROM channels WHERE channels.event_id = ?`, 1, (CDerr, CDres)=>{
+                    let channels = [];
+                    var CDarrleng = CDres.length;
+                    if(CDerr){
+                        console.log('Error while fetching channels by channel id', CDerr);
+                        result(null, CDerr);
+                    }else{
+                        //events[v].channels = channels;
+                        for(let z = 0; z <CDarrleng; z++){
+                            var channel = {
+                                "id": CDres[z].id,
+                                "name": CDres[z].name,
+                                "rooms": ""
+                            }
+                            channels.push(channel);
+                            const rooms = [];
+                            dbConn.query(`SELECT rooms.id, rooms.name FROM rooms WHERE rooms.channel_id = ?`, CDres[z].id, (RDerr, RDres)=>{
+                                var RDarrleng = RDres.length;
+                                if(RDerr){
+                                    console.log('Error while fetching rooms by channel id', RDerr);
+                                    result(null, RDerr);
+                                }else{
+                                    let v = 0;
+                                    for(let x = 0; x <RDarrleng; x++){
+                                        let sessions = [];
+                                        dbConn.query(`SELECT sessions.id, sessions.title, sessions.description, sessions.speaker, sessions.start, sessions.end, sessions.type, sessions.cost FROM sessions WHERE sessions.room_id = ?`, RDres[x].id, (SDerr, SDres)=>{                                        
+                                            var arrleng = SDres.length;
+                                            if(SDerr){
+                                                console.log('Error while fetching session by room id', SDerr);
+                                                result(null, SDerr);
+                                            }else{
+                                                for(let i = 0; i <arrleng; i++){
+                                                    var session ={
+                                                                "id": SDres[i].id, 
+                                                                "title": SDres[i].title, 
+                                                                "description": SDres[i].description, 
+                                                                "speaker": SDres[i].speaker, 
+                                                                "start": SDres[i].start, 
+                                                                "end": SDres[i].end, 
+                                                                "type": SDres[i].type, 
+                                                                "cost": SDres[i].cost,
+                                                            };
+                                                    
+                                                    sessions.push(session);
+                                                }
+                                                // console.log("amu di length ", arrleng);
+                                                // console.log("amu di length ", sessions.length);
+                                                // var counter1213 = sessions.length;
+                                                // console.log("amu di length ", counter1213);
+                                                const room = {
+                                                    "id": RDres[x].id,
+                                                    "name": RDres[x].name,
+                                                    "sessions": sessions
+                                                };
+
+                                                rooms.push(room);
+                                                
+                                                channels[z].rooms = rooms;
+                                                if(v==CDarrleng-1){
+                                                    //console.log(rooms);
+                                                    result(null, channels);
+                                                }
+                                                
+                                            }
+                                        })
+                                    }
+                                }  
+                            })
+                        }
+                    }
+                })
+                
+    //         }
+    //     }
+    // })
+
+
+    let events = [];
+    dbConn.query(`SELECT events.id, events.name, events.slug, events.date FROM events WHERE events.slug = ?`, EveSlug, (EDerr, EDres)=>{
+        if(EDerr){
+            console.log('Error while fetching channels by channel id', EDerr);
+            result(null, EDerr);
+        }
+        else{
+            //result(null, EDres);
+            let v= 0
+            let event = {
+                "id": EDres[0].id,
+                "name": EDres[0].name,
+                "slug": EDres[0].slug,
+                "date": EDres[0].date,
+                "channels": ""
+            }
+            events.push(event);
+            let channels = [];
+            dbConn.query(`SELECT channels.id, channels.name FROM channels WHERE channels.event_id = ?`, EDres[0].id, (CDerr, CDres)=>{
+                let CDarrleng = CDres.length;
+                if(CDerr){
+                    console.log('Error while fetching channels by channel id', CDerr);
+                    result(null, CDerr);
+                }
+                else{
+                    for(let z = 0; z <CDarrleng; z++){
+                        let channel = {
+                            "id": CDres[z].id,
+                            "name": CDres[z].name,
+                            "rooms": ""
+                        }
+                        channels.push(channel);
+                        let rooms = [];
+                        dbConn.query(`SELECT rooms.id, rooms.name FROM rooms WHERE rooms.channel_id = ?`, CDres[z].id, (RDerr, RDres)=>{
+                            let RDarrleng = RDres.length;
+                            if(RDerr){
+                                console.log('Error while fetching rooms by channel id', RDerr);
+                                result(null, RDerr);
+                            }
+                            else{
+                                for(let x = 0; x <RDarrleng; x++){
+                                    let room = {
+                                        "id": RDres[x].id,
+                                        "name": RDres[x].name,
+                                        "sessions": ""
+                                    };
+                                    rooms.push(room);
+                                    let sessions = [];
+                                    dbConn.query(`SELECT sessions.id, sessions.title, sessions.description, sessions.speaker, sessions.start, sessions.end, sessions.type, sessions.cost FROM sessions WHERE sessions.room_id = ?`, RDres[x].id, (SDerr, SDres)=>{                                        
+                                        var arrleng = SDres.length;
+                                        if(SDerr){
+                                            console.log('Error while fetching session by room id', SDerr);
+                                            result(null, SDerr);
+                                        }else{
+                                            for(let i = 0; i <arrleng; i++){
+                                                let session ={
+                                                            "id": SDres[i].id, 
+                                                            "title": SDres[i].title, 
+                                                            "description": SDres[i].description, 
+                                                            "speaker": SDres[i].speaker, 
+                                                            "start": SDres[i].start, 
+                                                            "end": SDres[i].end, 
+                                                            "type": SDres[i].type, 
+                                                            "cost": SDres[i].cost,
+                                                        };
+                                                
+                                                sessions.push(session);
+                                                
+                                                
+                                            }                    
+                                            rooms[x].sessions = sessions;
+                                            channels[z].rooms = rooms;
+                                            events[0].channels = channels;
+                                            if(z==CDarrleng-1)
+                                                result(null, events);
+                                        }
+                                    })
+                                    
+                                }
+                            } 
+                        })
+                        
+                    }                        
+                }
+            })
+            
+        }
+    })
