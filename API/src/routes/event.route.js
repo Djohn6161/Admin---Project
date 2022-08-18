@@ -2,11 +2,16 @@ const express = require('express');
 const router = express.Router();
 
 const eventController = require('../controllers/event.controller');
-router.get('/', eventController.getEventList);
+router.get('/events', eventController.getEventList);
 
-router.get('/:OrgSlug/events/:EveSlug',eventController.getEventBySlug);
+router.get('/organizers/:EveSlug/events/:OrgSlug',eventController.getEventBySlug)
 
-//router.get('/', eventController.attendeelogin);
+router.post('/login', eventController.attendeelogin);
+
+router.post('/logout', eventController.attendeelogout);
+
+// router.get('/:OrgSlug/events/:EveSlug',eventController.getEventBySlug);
+
 
 //router.get('/:OrgSlug/events/:EveSlug',eventController.getEventBySlug);
 

@@ -42,19 +42,73 @@ Event.getAllEvents = (result) => {
         }
     })
 }
-Event.attendeelogin = (result) => {
-    dbConn.query(`SELECT * FROM attendees WHERE attendees.registration_code = '35DGZX'`, (atterr, attres) => {
-        let attleng = attres.length;
-        if (atterr) {
-            console.log('Error while organizers by organizer slug', atterr);
-            result(null, atterr);
-        }
-        else {
-            console.log('theb attendee is this')
-            result(null, attres);
+Event.attendeelogout = (token, result) => {
+    dbConn.query(`UPDATE attendees SET login_token = '' WHERE login_token = '${token}'`, (inserr, insres) => {
+        if(inserr){
+            console.log('Error from inserting login_token in', __dirname);
+            console.log('The Error is ', inserr);
+            result(null, inserr)
+        }else{
+            // const insreslength = insres.length;
+            if(insres.affectedRows === 0){
+                console.log("Invalid token");
+                const message = {
+                    "message": "Invalid token"
+                }
+                result(null, message);
+            }else{
+                console.log("Logout success", insres);
+                const message = {   
+                    "message": "Logout success"
+                }
+                result(null, message);
+            }
+            
         }
     })
 }
+Event.attendeeInformation = (lastname, registrationcode, result) => {
+    dbConn.query(`UPDATE attendees SET login_token = 'AUTHORIZATION_TOKEN' WHERE registration_code = '${registrationcode}'`, (inserr, insres) => {
+        if(inserr){
+            console.log('Error from inserting login_token in', __dirname);
+            console.log('The Error is ', inserr);
+            result(null, inserr)
+        }else{
+            console.log('RESULT of the update: ', insres.message);
+        }
+    })
+    dbConn.query(`SELECT * FROM attendees WHERE lastname = '${lastname}' AND attendees.registration_code = ?`, registrationcode, (atterr, attres) => {
+
+        if (atterr) {
+            console.log('Error from query of Attendee Information: ', atterr);
+            result(null, atterr);
+        }
+        else {
+            const attreslength = attres.length;
+            console.log('the attendee is : ', attres)
+            if(attreslength === 0){
+                console.log("Invalid login");
+                const message = {
+                    "message": "Invalid login"
+                }
+                result(null, message);
+            }else{
+                console.log('Login succesful');
+                const attendee = {
+                    "firstname": attres[0].firstname,
+                    "lastname": attres[0].lastname,
+                    "username": attres[0].username,
+                    "email": attres[0].email,
+                    "token": attres[0].login_token
+                }
+                result(null, attendee)
+                
+            }
+            
+        }
+    })
+}
+
 Event.getEventBySlug = (EveSlug, OrgSlug, result) => {
     //let ORGDres = EDres = [];
     dbConn.query(`SELECT * FROM organizers WHERE organizers.slug = ?`, OrgSlug, (ORGDerr, ORGDres) => {
@@ -240,5 +294,4 @@ Event.getEventBySlug = (EveSlug, OrgSlug, result) => {
         }
     })
 }
-
 module.exports = Event;
