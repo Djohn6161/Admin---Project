@@ -64,3 +64,8 @@ exports.attendeelogout = (req, res) => {
         }
     })
 }
+exports.eventRegistration = (req, res) => {
+    const {token} = req.query;
+    console.log(`this is the params for organizer slug ${req.params.OrgSlug} and event${req.params.EveSlug}`);
+    res.send(`this is the params ${req.params.EveSlug}`)
+}
